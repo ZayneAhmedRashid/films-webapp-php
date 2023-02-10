@@ -1,7 +1,3 @@
-<?php
-    include_once 'dbh.php';
-?>
-
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 
@@ -9,30 +5,35 @@
     <title>Film Information Web Service</title>
     <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
 
-    <link rel="stylesheet" href="./style.css"></link>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></link>
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css"></link>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.css"></link>
+    <link rel="stylesheet" href="./style.css">
+    </link>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    </link>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+    </link>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.css">
+    </link>
 
     <script src="https://code.jquery.com/jquery-3.6.3.js" integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM=" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js" integrity="sha256-xLD7nhI62fcsEZK2/v8LsBcb4lG7dgULkuXoXB/j91c=" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.js" type="text/javascript"></script>
+    <script src="./scripts/js/films.js"></script>
+    <script src="./scripts/js/utils.js"></script>
     <!--<script src="./scripts/jquery.js" type="text/javascript"></script>
-    <script src="./scripts/jquery-ui.js" type="text/javascript"></script>-->
+        <script src="./scripts/jquery-ui.js" type="text/javascript"></script>-->
 </head>
 
 <body>
     <div class="main-wrapper">
         <div class="ui-widget" align="center">
             <p id="title">Film Information Web Service</p>
-            <select id="get-format" name="format" title="Data format">
-                <option value="JSON">JSON</option>
-                <option value="XML">XML</option>
-                <option value="TEXT">TEXT</option>
-            </select>
             <select id="search-type" name="search-type" title="Search type">
                 <option value="TITLE">TITLE</option>
                 <option value="ID">ID</option>
+            </select>
+            <select id="title-condition" name="title-condition" title="Title Condition" style="display: none">
+                <option value="EXACT">EXACT</option>
+                <option value="INCLUDES">INCLUDES</option>
             </select>
             <input id="search-tagged" placeholder="Search (e.g. ROCKY III)">
             <button id="search-button" class="small-button">
@@ -44,12 +45,6 @@
             <button id="get-all-films-button" class="small-button" title="Get all films">
                 <i class="fa fa-folder"></i>
             </button>
-            <div id="toggle-switch-wrapper">
-                <br />
-                <label>Accordion</label>
-                <a href="#" id="toggler">&nbsp;</a>
-                <label>Table</label>
-            </div>
             <br /> <br />
             <p class="subtitle" style="display: none">Film(s) retrieved from our database:</p>
         </div>
@@ -58,16 +53,6 @@
                 <img src="./images/ajax-loader.gif" />
                 Waiting for server...
             </p>
-        </div>
-        <div id="accordion">
-            <h3>TITLE</h3>
-            <div>
-                <p>ID:</p>
-                <p>YEAR:</p>
-                <p>DIRECTOR:</p>
-                <p>STARS:</p>
-                <p>REVIEW:</p>
-            </div>
         </div>
         <div id="table-wrapper" class="ui-widget" align="center">
             <table id="table" class="display" style="width: 100%;">
@@ -81,6 +66,7 @@
                         <th>REVIEW</th>
                     </tr>
                 </thead>
+                <tbody></tbody>
                 <tfoot>
                     <tr>
                         <th>ID</th>
@@ -95,6 +81,7 @@
         </div>
     </div>
     <div id="insert-popup-wrapper" class="ui-widget">
+        <!---<form id="scripts/insert-form.php" class="form-container" method="post">-->
         <form id="insert-form" class="form-container" method="post">
             <p id="form-title">Insert a Film</p>
             <div class="form-inputs">
@@ -112,20 +99,11 @@
                 <br /> <br />
                 <label for="stars">Stars</label>
                 <br />
-                <input type="text" placeholder="e.g. Christian Bale, Heath Ledger" name="stars" maxlength="100"
-                    required>
+                <input type="text" placeholder="e.g. Christian Bale, Heath Ledger" name="stars" maxlength="100" required>
                 <br /> <br />
                 <label for="review">Review</label>
                 <br />
                 <input type="text" placeholder="e.g. A dark, gritty, and realistic look..." name="review" required>
-                <br /> <br />
-                <label for="format">Format</label>
-                <br />
-                <select id="insert-format" name="format">
-                    <option value="JSON">JSON</option>
-                    <option value="XML">XML</option>
-                    <option value="TEXT">TEXT</option>
-                </select>
                 <br /> <br />
             </div>
             <div class="form-buttons">
@@ -157,20 +135,11 @@
                 <br /> <br />
                 <label for="stars">Stars</label>
                 <br />
-                <input type="text" placeholder="e.g. Christian Bale, Heath Ledger" name="stars" maxlength="100"
-                    required>
+                <input type="text" placeholder="e.g. Christian Bale, Heath Ledger" name="stars" maxlength="100" required>
                 <br /> <br />
                 <label for="review">Review</label>
                 <br />
                 <input type="text" placeholder="e.g. A dark, gritty, and realistic look..." name="review" required>
-                <br /> <br />
-                <label for="format">Format</label>
-                <br />
-                <select id="update-format" name="format">
-                    <option value="JSON">JSON</option>
-                    <option value="XML">XML</option>
-                    <option value="TEXT">TEXT</option>
-                </select>
                 <br /> <br />
             </div>
             <div class="form-buttons">

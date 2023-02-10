@@ -72,11 +72,6 @@ th {
 	margin-left: 50px;
 }
 
-#insert-format, #update-format {
-	width: calc(100% - 100px);
-	margin-left: 50px;
-}
-
 .form-buttons {
 	margin-left: 50px;
 }
